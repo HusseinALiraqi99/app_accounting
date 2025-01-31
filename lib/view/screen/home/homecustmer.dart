@@ -1,3 +1,4 @@
+import 'package:app_accounting/controller/auth/Customerrecord_controller.dart';
 import 'package:app_accounting/core/colorstyle.dart';
 import 'package:app_accounting/core/fontstyle.dart';
 import 'package:app_accounting/view/screen/home/addcustmer.dart';
@@ -10,6 +11,8 @@ class HomepageScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final CustomerRecordController customerController = Get.find();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('شركة الاتجاه الصاعد',
@@ -57,87 +60,88 @@ class HomepageScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          SizedBox(height: 30),
-          Container(
-            child: CustomTextField(
-              controller: TextEditingController(),
-              labelText: "اسم الزبون",
-              obscureText: false,
-              colorstyle: Colorstyle(),
-              onChanged: (value) {},
-            ),
-          ),
-          SizedBox(height: 10),
+          // 🔹 صندوق البحث
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 50.0),
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: Text(': اسم المنتج '),
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              onChanged: (value) => customerController.updateSearchQuery(value),
+              decoration: InputDecoration(
+                labelText: 'بحث عن زبون',
+                prefixIcon: Icon(Icons.search),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              ),
             ),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            width: MediaQuery.of(context).size.width * 0.8,
-            height: MediaQuery.of(context).size.width * 0.2,
-            decoration: BoxDecoration(
-              color: Colorstyle().coloritemes,
-              borderRadius: BorderRadius.circular(15.0),
+
+          // 🔹 قائمة الزبائن
+          Expanded(
+            child: Obx(
+              () {
+                if (customerController.filteredCustomers.isEmpty) {
+                  return Center(
+                    child: Text('لا يوجد زبائن'),
+                  );
+                } else {
+                  return ListView.builder(
+                    itemCount: customerController.filteredCustomers.length,
+                    itemBuilder: (context, index) {
+                      final customer =
+                          customerController.filteredCustomers[index];
+                      return Card(
+                        margin:
+                            EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        child: ListTile(
+                          title: Text(customer.name,
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('المنتج: ${customer.product}'),
+                              Text('المبلغ: ${customer.totalAmount}'),
+                            ],
+                          ),
+                          trailing: IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              customerController.deleteCustomer(customer.name);
+                            },
+                          ),
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text(customer.name),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('المنتج: ${customer.product}'),
+                                      Text('المبلغ: ${customer.totalAmount}'),
+                                    ],
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      child: Text('إغلاق'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
             ),
           ),
-          SizedBox(height: 10),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 50.0),
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: Text(': المبلغ الكلي '),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            width: MediaQuery.of(context).size.width * 0.8,
-            height: MediaQuery.of(context).size.width * 0.2,
-            decoration: BoxDecoration(
-              color: Colorstyle().coloritemes,
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-          ),
-          SizedBox(height: 10),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 50.0),
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: Text(': المبلغ المتبقي لحد الان '),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            width: MediaQuery.of(context).size.width * 0.8,
-            height: MediaQuery.of(context).size.width * 0.2,
-            decoration: BoxDecoration(
-              color: Colorstyle().coloritemes,
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-          ),
-          SizedBox(height: 30),
-          CustomTextField(
-            controller: TextEditingController(),
-            labelText: "المبلغ المستقطع ",
-            obscureText: false,
-            colorstyle: Colorstyle(),
-            onChanged: (value) {},
-          ),
-          SizedBox(height: 60),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colorstyle().buttonColor,
-            ),
-            child: Text(
-              'تاكيد',
-              style: Fontstyle.bottonfontStyle,
-              selectionColor: Colors.deepOrange,
-            ),
-          )
         ],
       ),
     );
