@@ -1,5 +1,8 @@
 import 'package:app_accounting/controller/auth/Customerrecord_controller.dart';
+import 'package:app_accounting/core/colorstyle.dart';
+import 'package:app_accounting/core/fontstyle.dart';
 import 'package:app_accounting/view/screen/home/addcustmer.dart';
+import 'package:app_accounting/view/widget/customertextfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,6 +15,8 @@ class Addcustomer extends StatelessWidget {
   final CustomerRecordController customerController =
       Get.put(CustomerRecordController());
 
+  final RxString errorMessage = ''.obs;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,33 +27,55 @@ class Addcustomer extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
+            CustomTextField(
               controller: nameController,
-              decoration: InputDecoration(labelText: 'اسم الزبون'),
+              labelText: "الاسم",
+              obscureText: false,
+              colorstyle: Colorstyle(),
+              onChanged: (value) {},
             ),
             SizedBox(height: 20),
-            TextField(
+            CustomTextField(
               controller: productController,
-              decoration: InputDecoration(labelText: 'اسم المنتج'),
+              labelText: "المنتج المباع",
+              obscureText: false,
+              colorstyle: Colorstyle(),
+              onChanged: (value) {},
             ),
             SizedBox(height: 20),
-            TextField(
+            CustomTextField(
               controller: amountController,
-              decoration: InputDecoration(labelText: 'المبلغ الكلي'),
-              keyboardType: TextInputType.number,
+              labelText: "المبلغ الكلي",
+              obscureText: false,
+              colorstyle: Colorstyle(),
+              onChanged: (value) {},
             ),
             SizedBox(height: 40),
             ElevatedButton(
               onPressed: () {
-                customerController.addCustomer(
-                  nameController.text,
-                  productController.text,
-                  amountController.text,
-                );
-                Get.back(); // الرجوع إلى الصفحة السابقة بعد الإضافة
+                if (nameController.text.isEmpty ||
+                    productController.text.isEmpty ||
+                    amountController.text.isEmpty) {
+                  errorMessage.value = 'يرجى ملء جميع الحقول';
+                } else {
+                  customerController.addCustomer(
+                    nameController.text,
+                    productController.text,
+                    amountController.text,
+                  );
+                  Get.back(); // الرجوع إلى الصفحة السابقة بعد الإضافة
+                }
               },
-              child: Text("اضافة"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colorstyle().buttonColor,
+              ),
+              child: Text("اضافة", style: Fontstyle.bottonfontStyle),
             ),
+            SizedBox(height: 20),
+            Obx(() => Text(
+                  errorMessage.value,
+                  style: TextStyle(color: Colors.red),
+                )),
           ],
         ),
       ),
