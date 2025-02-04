@@ -1,4 +1,4 @@
-import 'package:app_accounting/controller/auth/Customerrecord_controller.dart'
+import 'package:app_accounting/controller/Customerrecord_controller.dart'
     as auth;
 import 'package:app_accounting/view/screen/home/addcustmer.dart';
 import 'package:app_accounting/view/widget/home_pages/listcustmer.dart'

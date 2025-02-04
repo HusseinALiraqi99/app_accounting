@@ -1,4 +1,4 @@
-import 'package:app_accounting/controller/auth/Customerrecord_controller.dart';
+import 'package:app_accounting/controller/Customerrecord_controller.dart';
 import 'package:app_accounting/core/colorstyle.dart';
 import 'package:app_accounting/core/fontstyle.dart';
 import 'package:app_accounting/view/screen/home/addcustmer.dart';
@@ -72,6 +72,8 @@ class Addcustomer extends StatelessWidget {
               child: Text("اضافة", style: Fontstyle.bottonfontStyle),
             ),
             SizedBox(height: 20),
+
+            // لون النص أحمر في حالة وجود خطأ
             Obx(() => Text(
                   errorMessage.value,
                   style: TextStyle(color: Colors.red),

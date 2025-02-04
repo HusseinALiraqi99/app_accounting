@@ -1,7 +1,11 @@
-import 'package:app_accounting/controller/auth/Customerrecord_controller.dart';
+import 'package:app_accounting/controller/Customerrecord_controller.dart';
+import 'package:app_accounting/controller/Paidpricelist_controller.dart';
+import 'package:app_accounting/core/colorstyle.dart';
+import 'package:app_accounting/view/widget/customertextfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+// صفحة تابعة للصفحة الرئيسية تعرض قائمة الزبائن
 class listcustmer extends StatelessWidget {
   const listcustmer({
     super.key,
@@ -45,114 +49,103 @@ class listcustmer extends StatelessWidget {
                     return Card(
                       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                       child: ListTile(
-                        title: Text(customer.name,
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('المنتج: ${customer.product}'),
-                            Text('المبلغ: ${customer.totalAmount}'),
-                          ],
-                        ),
-                        trailing: IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: () {
-                            customerController.deleteCustomer(customer.name);
-                          },
-                        ),
-                        onTap: () {
-                          TextEditingController paidAmountController =
-                              TextEditingController();
-
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return Dialog(
-                                insetPadding: EdgeInsets.all(10),
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: MediaQuery.of(context).size.height,
-                                  padding: EdgeInsets.all(20),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            customer.name,
-                                            style: TextStyle(
-                                                fontSize: 24,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          IconButton(
-                                            icon: Icon(Icons.close),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(height: 20),
-                                      Text('المنتج: ${customer.product}',
-                                          style: TextStyle(fontSize: 18)),
-                                      SizedBox(height: 10),
-                                      Text(
-                                          'المبلغ المتبقي: ${customer.totalAmount}',
-                                          style: TextStyle(
-                                              fontSize: 18, color: Colors.red)),
-                                      Spacer(),
-
-                                      // 🔹 إدخال المبلغ المدفوع
-                                      TextField(
-                                        controller: paidAmountController,
-                                        keyboardType: TextInputType.number,
-                                        decoration: InputDecoration(
-                                          labelText: 'المبلغ المدفوع',
-                                          border: OutlineInputBorder(),
-                                        ),
-                                      ),
-                                      SizedBox(height: 10),
-
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          TextButton(
-                                            child: Text('إغلاق'),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                          SizedBox(width: 10),
-                                          TextButton(
-                                            child: Text('حفظ'),
-                                            onPressed: () {
-                                              double paidAmount =
-                                                  double.tryParse(
-                                                          paidAmountController
-                                                              .text) ??
-                                                      0.0;
-                                              if (paidAmount > 0) {
-                                                customerController
-                                                    .updatePaidAmount(
-                                                        customer.name,
-                                                        paidAmount);
-                                              }
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
+                          title: Text(customer.name,
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('المنتج: ${customer.product}'),
+                              Text('المبلغ الكي : ${customer.totalAmount}'),
+                            ],
+                          ),
+                          // 🔹 زر حذف الزبون
+                          trailing: IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              customerController.deleteCustomer(customer.name);
                             },
-                          );
-                        },
-                      ),
+                          ),
+                          onTap: () {
+                            TextEditingController paidAmountController =
+                                TextEditingController();
+                            final paidpricelistController =
+                                Get.put(PaidpricelistController());
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text('تفاصيل الزبون'),
+                                  content: Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.9, // 60% من عرض الشاشة
+                                    height: MediaQuery.of(context).size.height *
+                                        0.9, // 40% من ارتفاع الشاشة
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize
+                                          .min, // يجعل المحتوى يأخذ حجمه الطبيعي
+                                      children: [
+                                        Text('الاسم: ${customer.name}'),
+                                        Text('المنتج: ${customer.product}'),
+                                        Text(
+                                            'المبلغ الكلي: ${customer.totalAmount}'),
+                                        SizedBox(height: 20),
+                                        CustomTextField(
+                                          controller: paidAmountController,
+                                          labelText: "المبلغ المدفوع",
+                                          obscureText: false,
+                                          colorstyle: Colorstyle(),
+                                          onChanged: (value) {
+                                            if (value.isEmpty) {
+                                              paidpricelistController
+                                                  .addPaidpricelist(value);
+                                            }
+                                          },
+                                        ),
+                                        SizedBox(height: 20),
+                                        // ✅ زر الإضافة عند الضغط
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            String enteredAmount =
+                                                paidAmountController.text
+                                                    .trim();
+                                            if (enteredAmount.isNotEmpty) {
+                                              paidpricelistController
+                                                  .addPaidpricelist(
+                                                      enteredAmount); // إضافة المبلغ إلى القائمة
+                                              paidAmountController
+                                                  .clear(); // مسح الحقل بعد الإضافة
+                                            } else {
+                                              Get.snackbar("خطأ",
+                                                  "يرجى إدخال مبلغ مدفوع",
+                                                  snackPosition:
+                                                      SnackPosition.BOTTOM);
+                                            }
+                                          },
+                                          child: Text("إضافة المبلغ"),
+                                        ),
+                                        SizedBox(height: 20),
+                                        Expanded(
+                                            child: Obx(() => ListView.builder(
+                                                  itemCount:
+                                                      paidpricelistController
+                                                          .paidpricelist.length,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    return ListTile(
+                                                      title: Text(
+                                                          "المبلغ المدفوع: ${paidpricelistController.paidpricelist[index].paidpricelist}"),
+                                                    );
+                                                  },
+                                                )))
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          }),
                     );
                   },
                 );

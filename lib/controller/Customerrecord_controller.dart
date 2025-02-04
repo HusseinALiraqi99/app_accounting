@@ -18,6 +18,7 @@ class CustomerRecordController extends GetxController {
         .add(Customer(name: name, product: product, totalAmount: totalAmount));
   }
 
+  // تصفية قائمة الزبائن بناءً على البحث
   List<Customer> get filteredCustomers {
     if (searchQuery.isEmpty) {
       return customers;
@@ -40,17 +41,8 @@ class CustomerRecordController extends GetxController {
     }
   }
 
+// 🔹 تحديث البحث
   void updateSearchQuery(String query) {
     searchQuery.value = query;
-  }
-
-  void updatePaidAmount(String customerName, double paidAmount) {
-    final index = customers.indexWhere((c) => c.name == customerName);
-    if (index != -1) {
-      double currentAmount = double.parse(customers[index].totalAmount);
-      currentAmount -= paidAmount;
-      customers[index].totalAmount = currentAmount.toString();
-      customers.refresh(); // لتحديث الواجهة
-    }
   }
 }
