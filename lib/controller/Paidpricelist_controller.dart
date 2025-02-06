@@ -15,4 +15,11 @@ class PaidpricelistController extends GetxController {
   void addPaidpricelist(String paidPrice) {
     paidpricelist.add(Paidpricelist(paidpricelist: paidPrice));
   }
+
+  void paidpricelistDelete(int index) {
+    if (index >= 0 && index < paidpricelist.length) {
+      paidpricelist.removeAt(index);
+      paidpricelist.refresh(); // يجبر GetX على تحديث القائمة
+    }
+  }
 }

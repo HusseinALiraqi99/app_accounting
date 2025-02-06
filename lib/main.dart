@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Get.put(CustomerRecordController()); // 🔹 تهيئة الكونترولر
   runApp(MyApp());
   Get.put(CustomerRecordController());
 }

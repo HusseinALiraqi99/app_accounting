@@ -74,7 +74,7 @@ class listcustmer extends StatelessWidget {
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
-                                  title: Text('تفاصيل الزبون'),
+                                  title: Center(child: Text('تفاصيل الزبون')),
                                   content: Container(
                                     width: MediaQuery.of(context).size.width *
                                         0.9, // 60% من عرض الشاشة
@@ -82,11 +82,14 @@ class listcustmer extends StatelessWidget {
                                         0.9, // 40% من ارتفاع الشاشة
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          CrossAxisAlignment.center,
                                       mainAxisSize: MainAxisSize
                                           .min, // يجعل المحتوى يأخذ حجمه الطبيعي
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Text('الاسم: ${customer.name}'),
+
                                         Text('المنتج: ${customer.product}'),
                                         Text(
                                             'المبلغ الكلي: ${customer.totalAmount}'),
@@ -96,10 +99,12 @@ class listcustmer extends StatelessWidget {
                                           labelText: "المبلغ المدفوع",
                                           obscureText: false,
                                           colorstyle: Colorstyle(),
+                                          keyboardType: TextInputType.number,
                                           onChanged: (value) {
-                                            if (value.isEmpty) {
-                                              paidpricelistController
-                                                  .addPaidpricelist(value);
+                                            if (value.isEmpty &&
+                                                paidpricelistController
+                                                    .paidpricelist.isNotEmpty) {
+                                              return; // لا تفعل شيئًا عند إدخال قيمة فارغة
                                             }
                                           },
                                         ),
@@ -111,11 +116,18 @@ class listcustmer extends StatelessWidget {
                                                 paidAmountController.text
                                                     .trim();
                                             if (enteredAmount.isNotEmpty) {
+                                              // تحديث المبلغ المتبقي
+                                              customerController
+                                                  .updateRemainingAmount(
+                                                      customer, enteredAmount);
+
+                                              // إضافة المبلغ المدفوع إلى قائمة المدفوعات
                                               paidpricelistController
                                                   .addPaidpricelist(
-                                                      enteredAmount); // إضافة المبلغ إلى القائمة
+                                                      enteredAmount);
+
                                               paidAmountController
-                                                  .clear(); // مسح الحقل بعد الإضافة
+                                                  .clear(); // مسح الحقل بعد الإدخال
                                             } else {
                                               Get.snackbar("خطأ",
                                                   "يرجى إدخال مبلغ مدفوع",
@@ -125,6 +137,7 @@ class listcustmer extends StatelessWidget {
                                           },
                                           child: Text("إضافة المبلغ"),
                                         ),
+
                                         SizedBox(height: 20),
                                         Expanded(
                                             child: Obx(() => ListView.builder(
@@ -134,11 +147,47 @@ class listcustmer extends StatelessWidget {
                                                   itemBuilder:
                                                       (context, index) {
                                                     return ListTile(
-                                                      title: Text(
-                                                          "المبلغ المدفوع: ${paidpricelistController.paidpricelist[index].paidpricelist}"),
+                                                      title: Center(
+                                                        child: Text(
+                                                            "المبلغ المدفوع: ${paidpricelistController.paidpricelist[index].paidpricelist}"),
+                                                      ),
+                                                      trailing: IconButton(
+                                                        icon:
+                                                            Icon(Icons.delete),
+                                                        onPressed: () {
+                                                          paidpricelistController
+                                                              .paidpricelistDelete(
+                                                                  index);
+                                                        },
+                                                      ),
                                                     );
                                                   },
-                                                )))
+                                                ))),
+                                        Column(
+                                          children: [
+                                            Obx(() => Text(
+                                                'المبلغ المتبقي: ${customer.remainingAmount.value}')), // يجب استخدام .value للوصول إلى قيمة RxDouble
+
+                                            Container(
+                                              width: double.infinity,
+                                              child: ElevatedButton(
+                                                onPressed: () {
+                                                  Get.back();
+                                                },
+                                                child: Text('طباعة الفاتورة'),
+                                              ),
+                                            ),
+                                            Container(
+                                              width: double.infinity,
+                                              child: ElevatedButton(
+                                                onPressed: () {
+                                                  Get.back();
+                                                },
+                                                child: Text('إغلاق'),
+                                              ),
+                                            ),
+                                          ],
+                                        )
                                       ],
                                     ),
                                   ),

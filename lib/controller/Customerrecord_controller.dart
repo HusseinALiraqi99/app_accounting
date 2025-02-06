@@ -3,17 +3,19 @@ import 'package:get/get.dart';
 class Customer {
   String name;
   String product;
-  String totalAmount;
+  double totalAmount;
+  RxDouble remainingAmount; // 🔹متغير للمبلغ المتبقي
 
   Customer(
-      {required this.name, required this.product, required this.totalAmount});
+      {required this.name, required this.product, required this.totalAmount})
+      : remainingAmount = RxDouble(totalAmount); // 🔹تهيئة المتغير
 }
 
 class CustomerRecordController extends GetxController {
   var customers = <Customer>[].obs;
   var searchQuery = ''.obs;
 
-  void addCustomer(String name, String product, String totalAmount) {
+  void addCustomer(String name, String product, double totalAmount) {
     customers
         .add(Customer(name: name, product: product, totalAmount: totalAmount));
   }
@@ -38,6 +40,14 @@ class CustomerRecordController extends GetxController {
     // إذا وجدنا الزبون المطابق، نحذفه
     if (index != -1) {
       customers.removeAt(index);
+    }
+  }
+
+  void updateRemainingAmount(Customer customer, String paidAmount) {
+    double paid = double.tryParse(paidAmount) ?? 0.0;
+    if (paid > 0) {
+      customer.remainingAmount.value -=
+          paid; // خصم المبلغ المدفوع من المبلغ المتبقي
     }
   }
 

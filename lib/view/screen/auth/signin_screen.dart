@@ -37,6 +37,7 @@ class SigninScreen extends StatelessWidget {
               obscureText: false,
               colorstyle: colorstyle,
               onChanged: (value) {},
+              keyboardType: TextInputType.emailAddress,
             ),
             SizedBox(height: 30),
             CustomTextField(
@@ -45,6 +46,7 @@ class SigninScreen extends StatelessWidget {
               obscureText: true,
               colorstyle: colorstyle,
               onChanged: (value) {},
+              keyboardType: TextInputType.visiblePassword,
             ),
             SizedBox(height: 20),
             Column(

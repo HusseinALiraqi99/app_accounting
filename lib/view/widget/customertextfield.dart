@@ -8,6 +8,7 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText;
   final Colorstyle colorstyle;
   final Function(String) onChanged;
+  final TextInputType keyboardType;
 
   CustomTextField({
     required this.controller,
@@ -15,6 +16,7 @@ class CustomTextField extends StatelessWidget {
     required this.obscureText,
     required this.colorstyle,
     required this.onChanged,
+    required this.keyboardType,
   });
 
   @override
@@ -55,6 +57,7 @@ class CustomTextField extends StatelessWidget {
           obscureText: obscureText,
           textAlign: TextAlign.right,
           onChanged: onChanged,
+          keyboardType: keyboardType,
         ),
       ),
     );

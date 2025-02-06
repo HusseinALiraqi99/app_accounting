@@ -5,6 +5,7 @@ import 'package:app_accounting/view/screen/home/addcustmer.dart';
 import 'package:app_accounting/view/widget/customertextfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class Addcustomer extends StatelessWidget {
   Addcustomer({super.key});
@@ -33,6 +34,7 @@ class Addcustomer extends StatelessWidget {
               obscureText: false,
               colorstyle: Colorstyle(),
               onChanged: (value) {},
+              keyboardType: TextInputType.name,
             ),
             SizedBox(height: 20),
             CustomTextField(
@@ -41,6 +43,7 @@ class Addcustomer extends StatelessWidget {
               obscureText: false,
               colorstyle: Colorstyle(),
               onChanged: (value) {},
+              keyboardType: TextInputType.text,
             ),
             SizedBox(height: 20),
             CustomTextField(
@@ -49,6 +52,7 @@ class Addcustomer extends StatelessWidget {
               obscureText: false,
               colorstyle: Colorstyle(),
               onChanged: (value) {},
+              keyboardType: TextInputType.number, // إضافة هذا السطر
             ),
             SizedBox(height: 40),
             ElevatedButton(
@@ -61,23 +65,17 @@ class Addcustomer extends StatelessWidget {
                   customerController.addCustomer(
                     nameController.text,
                     productController.text,
-                    amountController.text,
+                    double.parse(amountController.text),
                   );
-                  Get.back(); // الرجوع إلى الصفحة السابقة بعد الإضافة
+
+                  Get.back(); // الرجوع مع تحديث البيانات تلقائيًا
                 }
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colorstyle().buttonColor,
-              ),
-              child: Text("اضافة", style: Fontstyle.bottonfontStyle),
+              child: Text('اضافة'),
             ),
-            SizedBox(height: 20),
-
-            // لون النص أحمر في حالة وجود خطأ
-            Obx(() => Text(
-                  errorMessage.value,
-                  style: TextStyle(color: Colors.red),
-                )),
+            Obx(() {
+              return Text(errorMessage.value, style: Fontstyle.bottonfontStyle);
+            }),
           ],
         ),
       ),
