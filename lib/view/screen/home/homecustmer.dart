@@ -72,7 +72,7 @@ class listseteing extends StatelessWidget {
           ],
         ),
       ),
-      body: widget.listcustmer(customerController: customerController),
+      body: widget.ListCustomer(customerController: customerController),
     );
   }
 }

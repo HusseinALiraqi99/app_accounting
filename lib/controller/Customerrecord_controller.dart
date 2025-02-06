@@ -1,24 +1,41 @@
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 
+// ✅ كلاس لتخزين بيانات الدفع لكل زبون
+class PaymentRecord {
+  double amount;
+  DateTime date;
+
+  PaymentRecord({required this.amount, required this.date});
+}
+
+// ✅ كلاس الزبون مع قائمة المدفوعات
 class Customer {
   String name;
   String product;
-  String totalAmount;
+  double totalAmount;
+  List<PaymentRecord> payments;
 
-  Customer(
-      {required this.name, required this.product, required this.totalAmount});
+  double get paidAmount => payments.fold(0, (sum, p) => sum + p.amount);
+  double get remainingAmount => totalAmount - paidAmount;
+
+  Customer({
+    required this.name,
+    required this.product,
+    required this.totalAmount,
+    List<PaymentRecord>? payments,
+  }) : payments = payments ?? [];
 }
 
 class CustomerRecordController extends GetxController {
   var customers = <Customer>[].obs;
   var searchQuery = ''.obs;
 
-  void addCustomer(String name, String product, String totalAmount) {
+  void addCustomer(String name, String product, double totalAmount) {
     customers
         .add(Customer(name: name, product: product, totalAmount: totalAmount));
   }
 
-  // تصفية قائمة الزبائن بناءً على البحث
   List<Customer> get filteredCustomers {
     if (searchQuery.isEmpty) {
       return customers;
@@ -32,17 +49,20 @@ class CustomerRecordController extends GetxController {
   }
 
   void deleteCustomer(String name) {
-    // نبحث عن الزبون المطابق للاسم في قائمة الزبائن الكاملة
-    int index = customers.indexWhere((customer) => customer.name == name);
-
-    // إذا وجدنا الزبون المطابق، نحذفه
-    if (index != -1) {
-      customers.removeAt(index);
-    }
+    customers.removeWhere((customer) => customer.name == name);
   }
 
-// 🔹 تحديث البحث
   void updateSearchQuery(String query) {
     searchQuery.value = query;
+  }
+
+  void addPayment(String customerName, double amount) {
+    int index = customers.indexWhere((c) => c.name == customerName);
+    if (index != -1) {
+      customers[index]
+          .payments
+          .add(PaymentRecord(amount: amount, date: DateTime.now()));
+      customers.refresh();
+    }
   }
 }

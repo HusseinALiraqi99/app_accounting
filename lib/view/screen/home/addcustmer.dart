@@ -61,7 +61,7 @@ class Addcustomer extends StatelessWidget {
                   customerController.addCustomer(
                     nameController.text,
                     productController.text,
-                    amountController.text,
+                    double.tryParse(amountController.text) ?? 0.0,
                   );
                   Get.back(); // الرجوع إلى الصفحة السابقة بعد الإضافة
                 }
