@@ -59,10 +59,26 @@ class CustomerRecordController extends GetxController {
   void addPayment(String customerName, double amount) {
     int index = customers.indexWhere((c) => c.name == customerName);
     if (index != -1) {
-      customers[index]
-          .payments
-          .add(PaymentRecord(amount: amount, date: DateTime.now()));
-      customers.refresh();
+      double paidAmount = customers[index].paidAmount; // إجمالي المدفوعات
+      double remainingAmount =
+          customers[index].remainingAmount; // المبلغ المتبقي
+
+      if (paidAmount + amount > customers[index].totalAmount) {
+        // إذا كان المبلغ المدفوع الجديد يتجاوز المبلغ الكلي
+        Get.snackbar(
+          "خطأ",
+          "لا يمكنك دفع أكثر من المبلغ الكلي الذي هو ${customers[index].totalAmount}",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      } else {
+        // إضافة الدفع إذا كان المبلغ صحيحًا
+        customers[index]
+            .payments
+            .add(PaymentRecord(amount: amount, date: DateTime.now()));
+        customers.refresh();
+      }
     }
   }
 }
